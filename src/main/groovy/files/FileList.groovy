@@ -44,7 +44,7 @@ class FileList extends Job {
 		// Process list directory
 		files.list("*.csv") { Map file -> println file }
 		
-		files.changeDirecoryToRoot()
+		files.changeDirectoryToRoot()
 		
 		// Build recursive list files to fileList dataset
 		files.buildList(path: new Path(mask: "{type}/{name}.{extension}", vars: [name: [lenMax: 10]]), recursive: true) { Map file ->
