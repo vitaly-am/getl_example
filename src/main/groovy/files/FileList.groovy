@@ -24,12 +24,17 @@ class FileList extends Job {
 
 	@Override
 	public void process() {
-		FileManager files = new FileManager(rootPath: Config.content.examplePath, localDirectory: "${Config.content.examplePath}/files")
+		conHistory.sqlHistoryFile = "${Config.content.example_path}/h2/example.sql"
+		
+		FileManager files = new FileManager(rootPath: Config.content.examplePath, 
+											localDirectory: "${Config.content.examplePath}/files",
+											fileListName: "file_list",
+											fileListConnection: conHistory)
 		// Connect to file manager
 		files.connect()
 		
-		def sayCurDir = {
-			println "\nCurrent directory: ${files.currentDir}:"
+		def sayCurDir = { String whatDo ->
+			println "\n$whatDo => Current directory: ${files.currentDir}:"
 		}
 		
 		// Printing csv files from current directory
@@ -40,36 +45,36 @@ class FileList extends Job {
 		files.changeDirectory("CSV")
 		
 		
-		sayCurDir()
+		sayCurDir('GET LIST')
 		// Process list directory
 		files.list("*.csv") { Map file -> println file }
 		
 		files.changeDirectoryToRoot()
 		
+		 if (!dsHistory.exists) {
+			 files.AddFieldsToDS(dsHistory)
+			 dsHistory.field << new Field(name: "type", length: 50)
+			 dsHistory.field << new Field(name: "name", length: 128)
+			 dsHistory.field << new Field(name: "extension", length: 10)
+			 dsHistory.create()
+		 }
+		
 		// Build recursive list files to fileList dataset
-		files.buildList(path: new Path(mask: "{type}/{name}.{extension}", vars: [name: [lenMax: 10]]), recursive: true) { Map file ->
-			!(file.type.toLowerCase() in ["files", "h2"] || (file.extension?.toLowerCase() in ["lck", "log"]))
+		files.buildList(path: new Path(mask: "{type}/{name}.{extension}", vars: [name: [lenMax: 100]]), recursive: true, story: dsHistory) { Map file ->
+			def result = !(file.type.toLowerCase() != 'csv' || (file.extension?.toLowerCase() in ["lck", "log"]))
+			
+			result
 		}
 		
-		sayCurDir()
+		sayCurDir('BUILD LIST')
 		// Printing fileList
 		files.fileList.eachRow { row -> println row }
 		
-		if (!dsHistory.exists) {
-			files.AddFieldsToDS(dsHistory)
-			dsHistory.field << new Field(name: "type", length: 50)
-			dsHistory.field << new Field(name: "name", length: 128)
-			dsHistory.field << new Field(name: "extension", length: 10)
-			dsHistory.create()
-		}
-		
-		sayCurDir()
+		sayCurDir('DOWNLOAD FILES')
 		// Download files from fileList
 		files.downloadFiles(story: dsHistory) { Map file ->
 			println "Download ${file.filepath}/${file.filename}"
 		}
-		
-		//conHistory.connected = false
 		
 		println "\nStore download history table:"
 		dsHistory.eachRow { row -> println row }
