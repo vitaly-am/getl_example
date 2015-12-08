@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
 	compile 'org.codehaus.groovy:groovy-all:2.4.5'
-	compile 'net.sourceforge.getl:getl:1.1.39'
+	compile 'net.sourceforge.getl:getl:1.1.41'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
