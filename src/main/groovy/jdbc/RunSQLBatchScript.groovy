@@ -62,7 +62,10 @@ SELECT * FROM TEST_SQL;
 
 ECHO select: {select}
 
-ERROR Generate error
+IF (1 = 1);
+ERROR Generated error
+END IF;
+ECHO Test error
 """
 //		h2.sqlHistoryFile = "c:/tmp/h2.sql"
 
