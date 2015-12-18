@@ -1,5 +1,6 @@
 package jdbc
 
+import getl.exception.ExceptionSQLScripter
 import getl.h2.H2Connection
 import getl.jdbc.SQLScripter
 import getl.jdbc.TableDataset
@@ -59,14 +60,19 @@ ECHO update: "{updated_name}" rows
 /*:select*/
 SELECT * FROM TEST_SQL;
 
-echo select: {select}
+ECHO select: {select}
 
-
+ERROR Generate error
 """
 //		h2.sqlHistoryFile = "c:/tmp/h2.sql"
 
-		scripter.vars.parent = "Test value"		
-		scripter.runSql()
+		scripter.vars.parent = "Test value"
+		try {		
+			scripter.runSql()
+		}
+		catch (ExceptionSQLScripter e) {
+			println e.message
+		}
 		println "All row updated: ${scripter.rowCount}, updated row for name to upper: ${scripter.vars.updated_name}"
 		println "Rows returned from script:"
 		scripter.vars.select.each { row -> println row }
