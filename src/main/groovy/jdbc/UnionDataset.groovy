@@ -17,8 +17,8 @@ import init.*
  *
  */
 class UnionDataset extends Job {
-	def countRow = 1000000
-	def countField = 100
+	def countRow = 100000
+	def countField = 50
 	
 	TDS h2 = new TDS()
 	TableDataset table1 = new TableDataset(connection: h2, tableName: "table1")
