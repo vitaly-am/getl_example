@@ -1,8 +1,7 @@
 package files
 
-import getl.files.SFTPManager
+import getl.files.*
 import getl.proc.Job
-import getl.files.Manager
 import getl.utils.*
 
 /**
@@ -11,17 +10,21 @@ import getl.utils.*
  */
 
 class WorkWithSFTP extends Job {
-	def host = '192.168.102.51'
-	def login = 'dbadmin'
-	def password = 'dbadmin'
-	def knownHosts = "c:/tmp/workwithsftp.keys"
-	def localDir = "c:/tmp"
-	def rootDir = "/home/dbadmin"
-	
-	SFTPManager sftp = new SFTPManager(server: host, login: login, password: password, knownHostsFile: knownHosts, localDirectory: localDir, rootPath: rootDir)
-
 	@Override
 	public void process() {
+		def host = args."host"
+		def login = args."login"
+		def password = args."password"
+		def knownHosts = args."hosts"
+		def localDir = args."dir"
+		def rootDir = args."root"
+		assert host != null && login != null && password != null && knownHosts != null && localDir != null && rootDir != null
+		
+		SFTPManager sftp = new SFTPManager(server: host, login: login, password: password, knownHostsFile: knownHosts,
+											localDirectory: localDir, rootPath: rootDir, 
+											aliveInterval: 1, aliveCountMax: 3, noopTime: 1,
+											scriptHistoryFile: "c:/tmp/WorkWithSFTP.txt")
+		
 		sftp.connect()
 		sftp.changeDirectory('/tmp')
 		
@@ -29,9 +32,6 @@ class WorkWithSFTP extends Job {
 		sftp.changeLocalDirectory("workwithsftp")
 		def testFile = new File("${sftp.currentLocalDir()}/1.txt")
 		if (!testFile.exists()) testFile << "TEST SFTP WORK"
-
-		println "*** list files *** "
-		sftp.list(null).each { println it }
 		
 		println "*** cd to test ***"
 		if (!sftp.existsDirectory("test")) sftp.createDir("test") 
@@ -52,6 +52,12 @@ class WorkWithSFTP extends Job {
 		println "*** upload 2.txt ***"
 		sftp.upload("2.txt")
 		sftp.removeLocalFile("2.txt")
+		
+		println "*** list files *** "
+		sftp.listDir(null).each { println it }
+		
+		println "*** Build list *** "
+		sftp.buildList(maskFile: "*") { println it; true }
 		
 		def out = new StringBuilder()
 		def err = new StringBuilder()
