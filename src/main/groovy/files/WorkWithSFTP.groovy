@@ -23,7 +23,8 @@ class WorkWithSFTP extends Job {
 		SFTPManager sftp = new SFTPManager(server: host, login: login, password: password, knownHostsFile: knownHosts,
 											localDirectory: localDir, rootPath: rootDir, 
 											aliveInterval: 1, aliveCountMax: 3, noopTime: 1,
-											scriptHistoryFile: "c:/tmp/WorkWithSFTP.txt")
+											scriptHistoryFile: "c:/tmp/WorkWithSFTP.txt",
+											threadBuildList: 8, threadFilesCount: 500)
 		
 		sftp.connect()
 		sftp.changeDirectory('/tmp')
