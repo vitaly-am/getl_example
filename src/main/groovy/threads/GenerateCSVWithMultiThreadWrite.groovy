@@ -28,7 +28,7 @@ class GenerateCSVWithMultiThreadWrite extends Job {
 		
 		def pt = new ProcessTime(name: "Unload to CSV file with 10 thread")
 		
-		new Flow().writeTo(dest: csvFile, dest_batchSize: 1000) { updater ->
+		new Flow().writeTo(dest: csvFile, dest_batchSize: 1000, writeSynch: true) { updater ->
 			new Executor(mainCode: { Logs.Info("writeln ${csvFile.writeRows} rows")}).runMany(10) { num ->
 				def start = (num - 1) * 1000000 + 1
 				def finish = num * 1000000

@@ -1,6 +1,5 @@
 package csv
 
-import groovy.transform.Synchronized
 import getl.csv.*
 import getl.data.*
 import getl.proc.*
