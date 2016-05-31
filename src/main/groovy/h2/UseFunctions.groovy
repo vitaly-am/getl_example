@@ -58,19 +58,17 @@ return rows[0]."count_rows"
 			TableDataset tempTable = new TableDataset(connection: tempCon, tableName: "DATA", field: h2_table.field)
 			tempTable.drop(ifExists: true)
 			tempTable.create()
-			//def sql_jdbc_1 = "SELECT GETL_CopyToJDBC('SELECT * FROM DATA', 'getl.h2.H2Connection', '${tempCon.currentConnectURL()}', 'sa', NULL, NULL, NULL, 'DATA', 10000) AS count_rows_jdbc"
-			//def rows_jdbc_1 = new QueryDataset(connection: h2, query: sql_jdbc_1).rows()
 			def rows_jdbc1 = H2Functions.SelectFunction(h2, "GETL_CopyToJDBC", [
 								query: "SELECT * FROM DATA", 
 								driver: "getl.h2.H2Connection", 
 								url: "${tempCon.currentConnectURL()}", 
-								login: "sa", pass: null, db: null, schema: null, table: "DATA", 
+								login: tempCon.login, password: tempCon.password, db: null, schema: null, table: "DATA", 
 								batchSize: 10000 
 								])
 			println rows_jdbc1
 			
 			tempTable.truncate()
-			def sql_jdbc_2 = "SELECT GETL_CopyFromJDBC('SELECT * FROM DATA', 'getl.h2.H2Connection', '${h2.currentConnectURL()}', 'sa', NULL, NULL, 'DATA', 10000) AS count_rows_jdbc"
+			def sql_jdbc_2 = "SELECT GETL_CopyFromJDBC('SELECT * FROM DATA', 'getl.h2.H2Connection', '${tempCon.currentConnectURL()}', '${tempCon.login}', '${tempCon.password}', NULL, 'DATA', 10000) AS count_rows_jdbc"
 			def rows_jdbc_2 = new QueryDataset(connection: tempCon, query: sql_jdbc_2).rows()
 			println rows_jdbc_2[0]."count_rows_jdbc"
 			
