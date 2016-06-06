@@ -24,7 +24,7 @@ class FileList extends Job {
 
 	@Override
 	public void process() {
-		conHistory.sqlHistoryFile = "${Config.content.example_path}/h2/example.sql"
+		conHistory.sqlHistoryFile = "${Config.content.examplePath}/h2/example.sql"
 		
 		FileManager files = new FileManager(rootPath: Config.content.examplePath, 
 											localDirectory: "${Config.content.examplePath}/files",
