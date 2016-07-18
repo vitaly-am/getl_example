@@ -8,8 +8,12 @@ repositories {
 }
 
 dependencies {
-	compile 'org.codehaus.groovy:groovy-all:2.4.3'
-	compile 'net.sourceforge.getl:getl:1.2.03'
+	compile 'org.codehaus.groovy:groovy-all:2.4.7'
+	compile 'net.sourceforge.getl:getl:1.2.04'
+}
+
+tasks.withType(GroovyCompile) {
+  groovyOptions.optimizationOptions.indy = true
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
