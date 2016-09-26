@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
 	compile 'org.codehaus.groovy:groovy-all:2.4.7'
-	compile 'net.sourceforge.getl:getl:1.2.04'
+	compile 'net.sourceforge.getl:getl:1.2.05'
 }
 
 tasks.withType(GroovyCompile) {
